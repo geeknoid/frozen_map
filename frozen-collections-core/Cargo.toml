@@ -1,0 +1,27 @@
+[package]
+name = "frozen-collections-core"
+description = "Implementation logic for frozen collections."
+readme = "README.md"
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
+categories.workspace = true
+keywords.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+num-traits = "0.2.19"
+bitvec = "1.0.1"
+nameof = "1.2.2"
+syn = { version = "2.0.67", features = ["extra-traits", "full", "fold"] }
+quote = "1.0.36"
+proc-macro2 = "1.0.86"
+proc-macro-error = "1.0.4"
+
+[dev-dependencies]
+rand = "0.9.0-alpha.1"
+criterion = "0.5.1"
+
+[lints]
+workspace = true

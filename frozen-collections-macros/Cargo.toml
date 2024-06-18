@@ -1,0 +1,29 @@
+[package]
+name = "frozen-collections-macros"
+description = "Macros to support frozen collections"
+readme = "README.md"
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
+categories.workspace = true
+keywords.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "frozen_collections_macros"
+path = "src/lib.rs"
+proc-macro = true
+
+[dependencies]
+syn = "2.0.67"
+quote = "1.0.36"
+proc-macro2 = "1.0.85"
+bitvec = "1.0.1"
+proc-macro-error = "1.0.4"
+
+[dependencies.frozen-collections-core]
+path = "../frozen-collections-core"
+
+[lints]
+workspace = true

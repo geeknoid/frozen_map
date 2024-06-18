@@ -1,0 +1,40 @@
+[workspace]
+resolver = "2"
+members = [
+    "frozen-collections",
+    "frozen-collections-core",
+    "frozen-collections-macros",
+    "benches",
+    "examples",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+categories = ["data-structures"]
+keywords = ["map", "set", "collection"]
+repository = "https://github.com/geeknoid/frozen-collections"
+license = "MIT"
+readme = "README.md"
+authors = ["Martin Taillefer <martin@taillefer.org>"]
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+correctness = { level = "warn", priority = -1 }
+complexity = { level = "warn", priority = -1 }
+perf = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+single_call_fn = "allow"
+min_ident_chars = "allow"
+unused_self = "allow"
+transmute_ptr_to_ptr = "allow"
+needless_continue = "allow"
+wildcard_imports = "allow"
+too_many_lines = "allow"
+multiple_crate_versions = "allow"
+missing_transmute_annotations = "allow"
+
+[profile.bench]
+codegen-units = 1
+lto = "fat"
