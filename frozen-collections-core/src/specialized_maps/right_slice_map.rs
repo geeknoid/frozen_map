@@ -3,15 +3,15 @@ use core::fmt::{Debug, Formatter, Result};
 use core::hash::BuildHasher;
 use core::intrinsics::transmute;
 use core::mem::MaybeUninit;
-use core::ops::Range;
 use core::ops::{Index, IndexMut};
+use core::ops::Range;
 use std::hash::RandomState;
 
 use num_traits::{PrimInt, Unsigned};
 
 use crate::analyzers::hash_code_analyzer::analyze_hash_codes;
-use crate::specialized_maps::hash_table::HashTable;
 use crate::specialized_maps::{Iter, Keys, Values};
+use crate::specialized_maps::hash_table::HashTable;
 use crate::traits::len::Len;
 use crate::traits::slice_hash::SliceHash;
 
@@ -42,7 +42,7 @@ where
 
         let code_analysis = analyze_hash_codes(codes);
         Self {
-            table: HashTable::new(payload.into_iter(), code_analysis.num_hash_slots, |k| {
+            table: HashTable::new(payload, code_analysis.num_hash_slots, |k| {
                 k.hash(&bh, k.len() - range.start..k.len() - range.end)
             }),
             bh,

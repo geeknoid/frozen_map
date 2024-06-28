@@ -2,15 +2,15 @@ use core::borrow::Borrow;
 use core::fmt::{Debug, Formatter, Result};
 use core::intrinsics::transmute;
 use core::mem::MaybeUninit;
-use core::ops::Range;
 use core::ops::{Index, IndexMut};
+use core::ops::Range;
 
 use bitvec::macros::internal::funty::Fundamental;
 use num_traits::{PrimInt, Unsigned};
 
 use crate::analyzers::hash_code_analyzer::analyze_hash_codes;
-use crate::specialized_maps::hash_table::HashTable;
 use crate::specialized_maps::{Iter, Keys, Values};
+use crate::specialized_maps::hash_table::HashTable;
 use crate::traits::len::Len;
 
 /// A map that uses key lengths as hash codes, in order to avoid hashing overhead.
@@ -29,9 +29,7 @@ where
         let code_analysis = analyze_hash_codes(payload.iter().map(|entry| entry.0.len().as_u64()));
 
         Self {
-            table: HashTable::new(payload.into_iter(), code_analysis.num_hash_slots, |k| {
-                k.len() as u64
-            }),
+            table: HashTable::new(payload, code_analysis.num_hash_slots, |k| k.len() as u64),
         }
     }
 }

@@ -2,13 +2,14 @@ use core::borrow::Borrow;
 use core::fmt::{Debug, Formatter, Result};
 use core::intrinsics::transmute;
 use core::mem::MaybeUninit;
-use core::ops::Range;
 use core::ops::{Index, IndexMut};
+use core::ops::Range;
+
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 
 use crate::analyzers::hash_code_analyzer::analyze_hash_codes;
-use crate::specialized_maps::hash_table::HashTable;
 use crate::specialized_maps::{Iter, Keys, Values};
+use crate::specialized_maps::hash_table::HashTable;
 use crate::traits::len::Len;
 
 /// A map whose keys are integers, and which uses those key values as hash codes to avoid the overhead of hashing.
@@ -26,9 +27,7 @@ where
     pub fn from_vec(payload: Vec<(K, V)>) -> Self {
         let code_analysis = analyze_hash_codes(payload.iter().map(|entry| entry.0.as_()));
         Self {
-            table: HashTable::new(payload.into_iter(), code_analysis.num_hash_slots, |k| {
-                k.as_()
-            }),
+            table: HashTable::new(payload, code_analysis.num_hash_slots, |k| k.as_()),
         }
     }
 }

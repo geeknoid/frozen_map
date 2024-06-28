@@ -1,16 +1,17 @@
 use core::borrow::Borrow;
 use core::fmt::{Debug, Formatter, Result};
 use core::hash::{BuildHasher, Hash};
-use core::ops::Range;
 use core::ops::{Index, IndexMut};
-use num_traits::{PrimInt, Unsigned};
+use core::ops::Range;
 use std::hash::RandomState;
 use std::intrinsics::transmute;
 use std::mem::MaybeUninit;
 
+use num_traits::{PrimInt, Unsigned};
+
 use crate::analyzers::hash_code_analyzer::analyze_hash_codes;
-use crate::specialized_maps::hash_table::HashTable;
 use crate::specialized_maps::{Iter, Keys, Values};
+use crate::specialized_maps::hash_table::HashTable;
 use crate::traits::len::Len;
 
 /// A general purpose map.
@@ -31,9 +32,7 @@ where
         let code_analysis = analyze_hash_codes(payload.iter().map(|entry| bh.hash_one(&entry.0)));
 
         Self {
-            table: HashTable::new(payload.into_iter(), code_analysis.num_hash_slots, |k| {
-                bh.hash_one(k)
-            }),
+            table: HashTable::new(payload, code_analysis.num_hash_slots, |k| bh.hash_one(k)),
             bh,
         }
     }

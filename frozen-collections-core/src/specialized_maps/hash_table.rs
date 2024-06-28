@@ -27,9 +27,8 @@ impl<K, V, S> HashTable<K, V, S>
 where
     S: PrimInt + Unsigned,
 {
-    pub fn new<I, F>(payload: I, num_hash_slots: usize, hash: F) -> Self
+    pub fn new<F>(payload: Vec<(K, V)>, num_hash_slots: usize, hash: F) -> Self
     where
-        I: Iterator<Item = (K, V)>,
         F: Fn(&K) -> u64,
     {
         let mut prep_items = Vec::new();
