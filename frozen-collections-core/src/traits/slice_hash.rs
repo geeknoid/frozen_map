@@ -1,5 +1,5 @@
-use core::hash::{BuildHasher, Hasher};
-use core::ops::Range;
+use std::hash::{BuildHasher, Hasher};
+use std::ops::Range;
 
 /// Enables hashing over a slice of an input.
 pub trait SliceHash {

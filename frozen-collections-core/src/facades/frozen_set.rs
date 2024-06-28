@@ -1,10 +1,9 @@
-use core::fmt::{Debug, Formatter, Result};
-use core::hash::{BuildHasher, Hash};
-use core::ops::{BitAnd, BitOr, BitXor, Sub};
 use std::any::type_name;
 use std::collections::HashSet;
+use std::hash::{BuildHasher, Hash};
 use std::hash::RandomState;
 use std::intrinsics::transmute;
+use std::ops::{BitAnd, BitOr, BitXor, Sub};
 
 use bitvec::macros::internal::funty::Fundamental;
 
@@ -82,11 +81,11 @@ enum SetTypes<T, BH> {
 /// use frozen_collections_core::facades::FrozenSet;
 /// use frozen_collections_core::traits::len::Len;
 ///
-/// let books = FrozenSet::from_vec(vec!(
+/// let books = FrozenSet::from_vec(vec![
 ///     "A Dance With Dragons".to_string(),
 ///     "To Kill a Mockingbird".to_string(),
 ///     "The Odyssey".to_string(),
-///     "The Great Gatsby".to_string()));
+///     "The Great Gatsby".to_string()]);
 ///
 /// // Check for a specific one.
 /// if !books.contains(&"The Winds of Winter".to_string()) {
@@ -370,7 +369,7 @@ where
     ///     println!("{x}");
     /// }
     /// ```
-    pub const fn iter(&self) -> Iter<T> {
+    pub fn iter(&self) -> Iter<T> {
         match &self.set_impl {
             SetTypes::Scanning(s) => s.iter(),
             SetTypes::CommonSmall(s) => s.iter(),
@@ -441,7 +440,7 @@ where
     /// use frozen_collections_core::facades::FrozenSet;
     /// use std::hash::RandomState;
     ///
-    /// let set = FrozenSet::from_vec(vec!(1, 2, 3));
+    /// let set = FrozenSet::from_vec(vec![1, 2, 3]);
     /// ```
     #[must_use]
     pub fn from_vec(payload: Vec<T>) -> Self {
@@ -479,6 +478,7 @@ where
     }
 }
 
+/* TODO: implement Debug
 impl<T, BH> Debug for FrozenSet<T, BH>
 where
     T: Debug,
@@ -499,6 +499,7 @@ where
         }
     }
 }
+*/
 
 impl<T, BH> PartialEq<Self> for FrozenSet<T, BH>
 where

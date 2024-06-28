@@ -1,8 +1,8 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
-use core::ops::{Index, IndexMut};
+use std::borrow::Borrow;
+use std::fmt::{Debug, Formatter, Result};
 use std::intrinsics::transmute;
 use std::mem::MaybeUninit;
+use std::ops::{Index, IndexMut};
 
 use num_traits::PrimInt;
 

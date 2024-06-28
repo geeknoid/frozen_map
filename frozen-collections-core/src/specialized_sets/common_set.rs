@@ -1,7 +1,7 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
-use core::hash::{BuildHasher, Hash};
+use std::borrow::Borrow;
 use std::collections::HashSet;
+use std::fmt::{Debug, Formatter, Result};
+use std::hash::{BuildHasher, Hash};
 use std::hash::RandomState;
 use std::ops::{BitAnd, BitOr, BitXor, Sub};
 
@@ -10,8 +10,6 @@ use num_traits::{PrimInt, Unsigned};
 use crate::specialized_maps::CommonMap;
 use crate::specialized_sets::{Iter, Set};
 use crate::traits::len::Len;
-
-// TODO: Implement PartialEq + Eq
 
 /// A general-purpose optimized read-only set.
 ///
@@ -40,7 +38,7 @@ where
     /// use frozen_collections_core::specialized_sets::CommonSet;
     /// use std::hash::RandomState;
     /// use frozen_collections_core::traits::len::Len;
-    ///     ///
+    ///
     /// let set = CommonSet::<_, u8, _>::from_vec_with_hasher(vec![1, 2, 3], RandomState::new());
     ///
     /// assert_eq!(set.len(), 3);
@@ -65,9 +63,9 @@ where
     ///
     /// ```
     /// use frozen_collections_core::specialized_sets::CommonSet;
-    /// use std::hash::RandomState;
     /// use frozen_collections_core::traits::len::Len;
-    ///     ///
+    /// use std::hash::RandomState;
+    ///
     /// let vec = vec![1, 2, 3];
     /// let set = CommonSet::<_, u8, _>::from_iter_with_hasher(vec.iter(), RandomState::new());
     ///
@@ -93,9 +91,9 @@ where
     ///
     /// ```
     /// use frozen_collections_core::specialized_sets::CommonSet;
-    /// use std::hash::RandomState;
     /// use frozen_collections_core::traits::len::Len;
-    ///     ///
+    /// use std::hash::RandomState;
+    ///
     /// let set = CommonSet::<_, u8, _>::with_hasher([1, 2, 3], RandomState::new());
     ///
     /// assert_eq!(set.len(), 3);
@@ -108,7 +106,9 @@ where
     /// allows. The capacity is determined by the `S` generic argument.
     #[must_use]
     pub fn with_hasher<const N: usize>(payload: [T; N], bh: BH) -> Self {
-        Self::from_vec_with_hasher(Vec::from_iter(payload), bh)
+        Self {
+            map: CommonMap::from_iter_with_hasher(payload.into_iter().map(|x| (x, ())), bh),
+        }
     }
 }
 
@@ -163,26 +163,6 @@ where
 }
 
 impl<T, S, BH> CommonSet<T, S, BH> {
-    /// An iterator visiting all elements in arbitrary order.
-    /// The iterator element type is `&'a T`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use frozen_collections_core::specialized_sets::CommonSet;
-    ///
-    /// let set = CommonSet::<_, u8, _>::from([1, 2, 3]);
-    ///
-    /// // Will print in an arbitrary order.
-    /// for x in set.iter() {
-    ///     println!("{x}");
-    /// }
-    /// ```
-    #[must_use]
-    pub const fn iter(&self) -> Iter<T> {
-        Iter::new(&self.map.table.entries)
-    }
-
     /// Returns the hasher for this set.
     #[must_use]
     pub const fn hasher(&self) -> &BH {
@@ -218,14 +198,21 @@ impl<T, S, BH> Len for CommonSet<T, S, BH> {
 
 impl<T, S, BH> Debug for CommonSet<T, S, BH>
 where
-    T: Debug,
+    T: Hash + Eq + Debug,
+    S: PrimInt + Unsigned,
+    BH: BuildHasher,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        self.map.fmt(f) // TODO: can we do better here?
+        f.debug_list().entries(self.iter()).finish()
     }
 }
 
-impl<'a, T, S, BH> IntoIterator for &'a CommonSet<T, S, BH> {
+impl<'a, T, S, BH> IntoIterator for &'a CommonSet<T, S, BH>
+where
+    T: Hash + Eq,
+    S: PrimInt + Unsigned,
+    BH: BuildHasher,
+{
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
 
@@ -240,7 +227,12 @@ where
     S: PrimInt + Unsigned,
 {
     fn from(payload: [T; N]) -> Self {
-        Self::from_vec(Vec::from_iter(payload))
+        Self {
+            map: CommonMap::from_iter_with_hasher(
+                payload.into_iter().map(|x| (x, ())),
+                RandomState::new(),
+            ),
+        }
     }
 }
 
@@ -250,7 +242,12 @@ where
     S: PrimInt + Unsigned,
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
-        Self::from_vec(Vec::from_iter(iter))
+        Self {
+            map: CommonMap::from_iter_with_hasher(
+                iter.into_iter().map(|x| (x, ())),
+                RandomState::new(),
+            ),
+        }
     }
 }
 
@@ -267,7 +264,7 @@ where
         BH: 'a;
 
     fn iter(&self) -> Iter<'_, T> {
-        self.iter()
+        Iter::new(&self.map.table.entries)
     }
 
     fn contains(&self, value: &T) -> bool {
@@ -329,4 +326,28 @@ where
     fn sub(self, rhs: &ST) -> Self::Output {
         self.difference(rhs).cloned().collect()
     }
+}
+
+impl<T, S, ST, BH> PartialEq<ST> for CommonSet<T, S, BH>
+where
+    T: Hash + Eq + Clone,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+    BH: BuildHasher + Default,
+{
+    fn eq(&self, other: &ST) -> bool {
+        if self.len() != other.len() {
+            return false;
+        }
+
+        self.iter().all(|value| other.contains(value))
+    }
+}
+
+impl<T, S, BH> Eq for CommonSet<T, S, BH>
+where
+    T: Hash + Eq + Clone,
+    S: PrimInt + Unsigned,
+    BH: BuildHasher + Default,
+{
 }

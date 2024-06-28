@@ -1,11 +1,11 @@
-use core::any::type_name;
-use core::fmt::{Debug, Formatter, Result};
-use core::hash::{BuildHasher, Hash};
-use core::mem::MaybeUninit;
-use core::mem::transmute;
-use core::ops::Index;
-use core::ops::IndexMut;
+use std::any::type_name;
+use std::fmt::{Debug, Formatter, Result};
+use std::hash::{BuildHasher, Hash};
 use std::hash::RandomState;
+use std::mem::MaybeUninit;
+use std::mem::transmute;
+use std::ops::Index;
+use std::ops::IndexMut;
 
 use bitvec::macros::internal::funty::Fundamental;
 

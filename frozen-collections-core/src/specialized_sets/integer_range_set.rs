@@ -1,5 +1,8 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
+use std::borrow::Borrow;
+use std::collections::HashSet;
+use std::fmt::{Debug, Formatter, Result};
+use std::hash::{Hash, RandomState};
+use std::ops::{BitAnd, BitOr, BitXor, Sub};
 
 use num_traits::PrimInt;
 
@@ -112,3 +115,67 @@ where
         self.contains(value)
     }
 }
+
+impl<T, ST> BitOr<&ST> for &IntegerRangeSet<T>
+where
+    T: PrimInt + Hash,
+    ST: Set<T>,
+{
+    type Output = HashSet<T, RandomState>;
+
+    fn bitor(self, rhs: &ST) -> Self::Output {
+        self.union(rhs).cloned().collect()
+    }
+}
+
+impl<T, ST> BitAnd<&ST> for &IntegerRangeSet<T>
+where
+    T: PrimInt + Hash,
+    ST: Set<T>,
+{
+    type Output = HashSet<T, RandomState>;
+
+    fn bitand(self, rhs: &ST) -> Self::Output {
+        self.intersection(rhs).cloned().collect()
+    }
+}
+
+impl<T, ST> BitXor<&ST> for &IntegerRangeSet<T>
+where
+    T: PrimInt + Hash,
+    ST: Set<T>,
+{
+    type Output = HashSet<T, RandomState>;
+
+    fn bitxor(self, rhs: &ST) -> Self::Output {
+        self.symmetric_difference(rhs).cloned().collect()
+    }
+}
+
+impl<T, ST> Sub<&ST> for &IntegerRangeSet<T>
+where
+    T: PrimInt + Hash,
+    ST: Set<T>,
+{
+    type Output = HashSet<T, RandomState>;
+
+    fn sub(self, rhs: &ST) -> Self::Output {
+        self.difference(rhs).cloned().collect()
+    }
+}
+
+impl<T, ST> PartialEq<ST> for IntegerRangeSet<T>
+where
+    T: PrimInt,
+    ST: Set<T>,
+{
+    fn eq(&self, other: &ST) -> bool {
+        if self.len() != other.len() {
+            return false;
+        }
+
+        self.iter().all(|value| other.contains(value))
+    }
+}
+
+impl<T> Eq for IntegerRangeSet<T> where T: PrimInt {}

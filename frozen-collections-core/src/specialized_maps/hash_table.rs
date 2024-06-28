@@ -1,6 +1,6 @@
-use core::fmt::{Debug, Formatter, Result};
-use core::num::{NonZeroU64, NonZeroUsize};
-use core::ops::Range;
+use std::fmt::{Debug, Formatter, Result};
+use std::num::{NonZeroU64, NonZeroUsize};
+use std::ops::Range;
 
 use bitvec::macros::internal::funty::Fundamental;
 use num_traits::{PrimInt, Unsigned};
@@ -31,21 +31,7 @@ where
     where
         F: Fn(&K) -> u64,
     {
-        let mut prep_items = Vec::new();
-        let mut count = 0;
-        for entry in payload {
-            let hash_code = hash(&entry.0);
-            let hash_slot_index = (hash_code % num_hash_slots as u64).as_usize();
-
-            prep_items.push(PrepItem {
-                hash_slot_index,
-                entry,
-            });
-
-            count += 1;
-        }
-
-        if count == 0 {
+        if payload.len() == 0 {
             return Self {
                 num_slots: NonZeroU64::try_from(1).unwrap(),
                 slots: Box::new([HashTableSlot {
@@ -54,8 +40,19 @@ where
                 }]),
                 entries: Box::new([]),
             };
-        } else if count > S::max_value().to_usize().unwrap() {
+        } else if payload.len() > S::max_value().to_usize().unwrap() {
             panic!("Too many payload entries for the map size S")
+        }
+
+        let mut prep_items = Vec::new();
+        for entry in payload {
+            let hash_code = hash(&entry.0);
+            let hash_slot_index = (hash_code % num_hash_slots as u64).as_usize();
+
+            prep_items.push(PrepItem {
+                hash_slot_index,
+                entry,
+            });
         }
 
         // sort items so hash collisions are contiguous
@@ -63,7 +60,7 @@ where
 
         let mut entry_index = 0;
         let mut slots = Vec::with_capacity(num_hash_slots);
-        let mut entries = Vec::with_capacity(count);
+        let mut entries = Vec::with_capacity(prep_items.len());
 
         slots.resize_with(num_hash_slots, || HashTableSlot {
             min_index: S::zero(),

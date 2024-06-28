@@ -1,7 +1,7 @@
-use core::cmp::PartialEq;
-use core::fmt::Display;
-use core::str::FromStr;
+use std::cmp::PartialEq;
+use std::fmt::Display;
 use std::hash::RandomState;
+use std::str::FromStr;
 
 use bitvec::macros::internal::funty::Fundamental;
 use num_traits::PrimInt;
@@ -230,7 +230,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use core::str::FromStr;
+    use std::str::FromStr;
 
     use proc_macro2::TokenStream;
 

@@ -1,6 +1,6 @@
-use core::fmt::{Debug, Formatter, Result};
-use core::iter::FusedIterator;
 use std::cmp::max;
+use std::fmt::{Debug, Formatter, Result};
+use std::iter::FusedIterator;
 
 use crate::specialized_sets::Set;
 

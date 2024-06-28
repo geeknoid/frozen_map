@@ -1,6 +1,6 @@
-use core::cmp::{max, min};
-use core::hash::{BuildHasher, Hash};
+use std::cmp::{max, min};
 use std::collections::{HashMap, HashSet};
+use std::hash::{BuildHasher, Hash};
 
 /// How to treat keys which are slices for best performance.
 #[derive(PartialEq, Eq, Debug)]

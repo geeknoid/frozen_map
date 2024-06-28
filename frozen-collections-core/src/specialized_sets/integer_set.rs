@@ -1,6 +1,6 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
+use std::borrow::Borrow;
 use std::collections::HashSet;
+use std::fmt::{Debug, Formatter, Result};
 use std::hash::Hash;
 use std::ops::{BitAnd, BitOr, BitXor, Sub};
 

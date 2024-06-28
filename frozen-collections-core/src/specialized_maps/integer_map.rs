@@ -1,15 +1,15 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
-use core::intrinsics::transmute;
-use core::mem::MaybeUninit;
-use core::ops::{Index, IndexMut};
-use core::ops::Range;
+use std::borrow::Borrow;
+use std::fmt::{Debug, Formatter, Result};
+use std::intrinsics::transmute;
+use std::mem::MaybeUninit;
+use std::ops::Range;
+use std::ops::{Index, IndexMut};
 
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 
 use crate::analyzers::hash_code_analyzer::analyze_hash_codes;
-use crate::specialized_maps::{Iter, Keys, Values};
 use crate::specialized_maps::hash_table::HashTable;
+use crate::specialized_maps::{Iter, Keys, Values};
 use crate::traits::len::Len;
 
 /// A map whose keys are integers, and which uses those key values as hash codes to avoid the overhead of hashing.

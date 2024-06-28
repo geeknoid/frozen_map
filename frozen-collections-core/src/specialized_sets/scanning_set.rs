@@ -1,5 +1,5 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
+use std::borrow::Borrow;
+use std::fmt::{Debug, Formatter, Result};
 
 use crate::specialized_maps::ScanningMap;
 use crate::specialized_sets::{Iter, Set};

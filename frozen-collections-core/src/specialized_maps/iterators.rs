@@ -1,5 +1,5 @@
-use core::fmt::{Debug, Formatter, Result};
-use core::iter::FusedIterator;
+use std::fmt::{Debug, Formatter, Result};
+use std::iter::FusedIterator;
 
 /// An iterator over the entries of a map.
 pub struct Iter<'a, K, V> {

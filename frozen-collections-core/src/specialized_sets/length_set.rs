@@ -1,5 +1,5 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
+use std::borrow::Borrow;
+use std::fmt::{Debug, Formatter, Result};
 
 use num_traits::{PrimInt, Unsigned};
 

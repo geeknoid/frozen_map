@@ -1,8 +1,8 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
-use core::intrinsics::transmute;
-use core::mem::MaybeUninit;
-use core::ops::{Index, IndexMut};
+use std::borrow::Borrow;
+use std::fmt::{Debug, Formatter, Result};
+use std::intrinsics::transmute;
+use std::mem::MaybeUninit;
+use std::ops::{Index, IndexMut};
 
 use crate::specialized_maps::{Iter, Keys, Values};
 use crate::traits::len::Len;

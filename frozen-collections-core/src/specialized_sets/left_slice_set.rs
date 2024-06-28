@@ -1,7 +1,7 @@
-use core::borrow::Borrow;
-use core::fmt::{Debug, Formatter, Result};
-use core::ops::Range;
+use std::borrow::Borrow;
+use std::fmt::{Debug, Formatter, Result};
 use std::hash::{BuildHasher, RandomState};
+use std::ops::Range;
 
 use num_traits::{PrimInt, Unsigned};
 
