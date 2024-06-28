@@ -6,6 +6,7 @@ use num_traits::PrimInt;
 use crate::specialized_maps::IntegerRangeMap;
 use crate::specialized_sets::{Iter, Set};
 use crate::traits::len::Len;
+
 // TODO: implement PartialEq + Eq
 
 /// A map whose values are a continuous range of integers.
@@ -33,12 +34,6 @@ where
         Q: PrimInt,
     {
         Some(self.map.get_key_value(value)?.0)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<&T> {
-        Some(self.map.get_by_index(index)?.0)
     }
 
     #[inline]

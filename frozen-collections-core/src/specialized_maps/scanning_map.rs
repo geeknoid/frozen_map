@@ -103,16 +103,6 @@ impl<K, V> ScanningMap<K, V> {
 
     #[inline]
     #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<(&K, &V)> {
-        if index < self.len() {
-            Some((&self.entries[index].0, &self.entries[index].1))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
-    #[must_use]
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
         K: Borrow<Q>,
@@ -227,9 +217,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::ScanningMap;
     use crate::traits::len::Len;
-    use std::collections::HashMap;
+
+    use super::ScanningMap;
 
     #[test]
     fn new_creates_scanning_map_with_given_payload() {
@@ -284,43 +274,6 @@ mod tests {
         let payload = vec![(10, 20), (30, 40), (50, 60)];
         let map = ScanningMap::<i32, i32>::from_vec(payload);
         assert_eq!(None, map.get_key_value(&0));
-    }
-
-    #[test]
-    fn get_by_index_returns_some_for_existing_indices() {
-        let payload = vec![
-            ("ABC".to_string(), 123),
-            ("DEFG".to_string(), 456),
-            ("HIJKL".to_string(), 768),
-        ];
-        let map = ScanningMap::<String, i32>::from_vec(payload);
-        let mut hm = HashMap::<String, i32>::new();
-
-        let kv0 = map.get_by_index(0).unwrap();
-        let kv1 = map.get_by_index(1).unwrap();
-        let kv2 = map.get_by_index(2).unwrap();
-
-        hm.insert(kv0.0.to_string(), *kv0.1);
-        hm.insert(kv1.0.to_string(), *kv1.1);
-        hm.insert(kv2.0.to_string(), *kv2.1);
-
-        assert_eq!(Some((&"ABC".to_string(), &123)), hm.get_key_value("ABC"));
-        assert_eq!(Some((&"DEFG".to_string(), &456)), hm.get_key_value("DEFG"));
-        assert_eq!(
-            Some((&"HIJKL".to_string(), &768)),
-            hm.get_key_value("HIJKL")
-        );
-    }
-
-    #[test]
-    fn get_by_index_returns_none_for_non_existing_indices() {
-        let payload = vec![
-            ("ABC".to_string(), 123),
-            ("DEFG".to_string(), 456),
-            ("HIJKL".to_string(), 768),
-        ];
-        let map = ScanningMap::<String, i32>::from_vec(payload);
-        assert_eq!(None, map.get_by_index(3));
     }
 
     #[test]

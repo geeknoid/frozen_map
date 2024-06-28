@@ -1,8 +1,8 @@
 use core::any::type_name;
 use core::fmt::{Debug, Formatter, Result};
 use core::hash::{BuildHasher, Hash};
-use core::mem::transmute;
 use core::mem::MaybeUninit;
+use core::mem::transmute;
 use core::ops::Index;
 use core::ops::IndexMut;
 use std::hash::RandomState;
@@ -509,22 +509,6 @@ where
             }
 
             Some(result.assume_init())
-        }
-    }
-
-    pub fn get_by_index(&self, index: usize) -> Option<(&K, &V)> {
-        match &self.map_impl {
-            MapTypes::Scanning(m) => m.get_by_index(index),
-            MapTypes::CommonSmall(m) => m.get_by_index(index),
-            MapTypes::CommonLarge(m) => m.get_by_index(index),
-            MapTypes::U32Small(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::U32Large(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::U32Range(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::LeftStringSliceSmall(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::LeftStringSliceLarge(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::RightStringSliceSmall(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::RightStringSliceLarge(m) => unsafe { transmute(m.get_by_index(index)) },
-            MapTypes::StringLengthSmall(m) => unsafe { transmute(m.get_by_index(index)) },
         }
     }
 

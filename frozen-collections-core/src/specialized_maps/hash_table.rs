@@ -113,15 +113,6 @@ where
 
 impl<K, V, S> HashTable<K, V, S> {
     #[inline]
-    pub const fn get_by_index(&self, index: usize) -> Option<(&K, &V)> {
-        if index < self.len() {
-            Some((&self.entries[index].0, &self.entries[index].1))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
     pub const fn len(&self) -> usize {
         self.entries.len()
     }

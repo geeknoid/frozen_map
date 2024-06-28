@@ -38,12 +38,6 @@ impl<T> ScanningSet<T> {
 
     #[inline]
     #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<&T> {
-        Some(self.map.get_by_index(index)?.0)
-    }
-
-    #[inline]
-    #[must_use]
     pub fn contains<Q>(&self, value: &Q) -> bool
     where
         T: Borrow<Q>,

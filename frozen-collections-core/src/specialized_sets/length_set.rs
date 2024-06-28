@@ -6,6 +6,7 @@ use num_traits::{PrimInt, Unsigned};
 use crate::specialized_maps::LengthMap;
 use crate::specialized_sets::{Iter, Set};
 use crate::traits::len::Len;
+
 // TODO: implement PartialEq + Eq
 
 /// A set specialized for integer values.
@@ -39,12 +40,6 @@ where
         Q: Len + Eq,
     {
         Some(self.map.get_key_value(value)?.0)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<&T> {
-        Some(self.map.get_by_index(index)?.0)
     }
 
     #[inline]

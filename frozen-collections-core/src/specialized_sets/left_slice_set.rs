@@ -9,6 +9,7 @@ use crate::specialized_maps::LeftSliceMap;
 use crate::specialized_sets::{Iter, Set};
 use crate::traits::len::Len;
 use crate::traits::slice_hash::SliceHash;
+
 // TODO: Implement PartialEq + Eq
 
 /// A set that hashes left-aligned slices of its values.
@@ -64,12 +65,6 @@ where
         Q: SliceHash + Len + Eq,
     {
         Some(self.map.get_key_value(value)?.0)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<&T> {
-        Some(self.map.get_by_index(index)?.0)
     }
 
     #[inline]

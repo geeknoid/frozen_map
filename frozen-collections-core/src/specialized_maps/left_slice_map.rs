@@ -168,12 +168,6 @@ where
 
     #[inline]
     #[must_use]
-    pub const fn get_by_index(&self, index: usize) -> Option<(&K, &V)> {
-        self.table.get_by_index(index)
-    }
-
-    #[inline]
-    #[must_use]
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
         K: Borrow<Q>,

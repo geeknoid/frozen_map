@@ -12,8 +12,6 @@ use crate::specialized_sets::{Iter, Set};
 use crate::traits::len::Len;
 
 // TODO: Implement PartialEq + Eq
-// TODO: Remove all traces of get_by_index if possible. If not possible,
-//       implement it for all specialized sets.
 
 /// A general-purpose optimized read-only set.
 ///
@@ -139,12 +137,6 @@ where
         Q: Hash + Eq,
     {
         Some(self.map.get_key_value(value)?.0)
-    }
-
-    #[inline]
-    #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<&T> {
-        Some(self.map.get_by_index(index)?.0)
     }
 
     /// Returns `true` if the set contains a value.

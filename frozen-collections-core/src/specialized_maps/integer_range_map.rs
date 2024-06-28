@@ -1,9 +1,10 @@
 use core::borrow::Borrow;
 use core::fmt::{Debug, Formatter, Result};
 use core::ops::{Index, IndexMut};
-use num_traits::PrimInt;
 use std::intrinsics::transmute;
 use std::mem::MaybeUninit;
+
+use num_traits::PrimInt;
 
 use crate::specialized_maps::{Iter, Keys, Values};
 use crate::traits::len::Len;
@@ -127,16 +128,6 @@ impl<K, V> IntegerRangeMap<K, V> {
 
     #[inline]
     #[must_use]
-    pub fn get_by_index(&self, index: usize) -> Option<(&K, &V)> {
-        if index < self.len() {
-            Some((&self.entries[index].0, &self.entries[index].1))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
-    #[must_use]
     pub fn contains_key<Q>(&self, key: &Q) -> bool
     where
         K: Borrow<Q>,
@@ -251,9 +242,9 @@ where
 
 #[cfg(test)]
 mod test {
-    use super::IntegerRangeMap;
     use crate::traits::len::Len;
-    use std::collections::HashMap;
+
+    use super::IntegerRangeMap;
 
     #[test]
     fn range_map_test() {
@@ -294,31 +285,5 @@ mod test {
                 );
             }
         }
-    }
-
-    #[test]
-    fn get_by_index_returns_some_for_existing_indices() {
-        let payload = vec![(10, 123), (11, 456), (12, 768)];
-        let map = IntegerRangeMap::<i32, u16>::from_vec(payload);
-        let mut hm = HashMap::<i32, u16>::new();
-
-        let kv0 = map.get_by_index(0).unwrap();
-        let kv1 = map.get_by_index(1).unwrap();
-        let kv2 = map.get_by_index(2).unwrap();
-
-        hm.insert(*kv0.0, *kv0.1);
-        hm.insert(*kv1.0, *kv1.1);
-        hm.insert(*kv2.0, *kv2.1);
-
-        assert_eq!(Some((&10, &123)), hm.get_key_value(&10));
-        assert_eq!(Some((&11, &456)), hm.get_key_value(&11));
-        assert_eq!(Some((&12, &768)), hm.get_key_value(&12));
-    }
-
-    #[test]
-    fn get_by_index_returns_none_for_non_existing_indices() {
-        let payload = vec![(10, 123), (11, 456), (12, 768)];
-        let map = IntegerRangeMap::<i32, u16>::from_vec(payload);
-        assert_eq!(None, map.get_by_index(3));
     }
 }

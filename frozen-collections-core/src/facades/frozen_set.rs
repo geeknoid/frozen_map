@@ -427,22 +427,6 @@ where
             },
         }
     }
-
-    pub fn get_by_index(&self, index: usize) -> Option<&T> {
-        match &self.set_impl {
-            SetTypes::Scanning(s) => s.get_by_index(index),
-            SetTypes::CommonSmall(s) => s.get_by_index(index),
-            SetTypes::CommonLarge(s) => s.get_by_index(index),
-            SetTypes::U32Small(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::U32Large(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::U32Range(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::LeftStringSliceSmall(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::LeftStringSliceLarge(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::RightStringSliceSmall(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::RightStringSliceLarge(s) => unsafe { transmute(s.get_by_index(index)) },
-            SetTypes::StringLengthSmall(s) => unsafe { transmute(s.get_by_index(index)) },
-        }
-    }
 }
 
 impl<T> FrozenSet<T, RandomState>
