@@ -1,7 +1,7 @@
 use std::any::type_name;
 use std::collections::HashSet;
-use std::hash::{BuildHasher, Hash};
 use std::hash::RandomState;
+use std::hash::{BuildHasher, Hash};
 use std::intrinsics::transmute;
 use std::ops::{BitAnd, BitOr, BitXor, Sub};
 

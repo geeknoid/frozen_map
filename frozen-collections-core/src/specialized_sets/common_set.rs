@@ -8,7 +8,7 @@ use std::ops::{BitAnd, BitOr, BitXor, Sub};
 use num_traits::{PrimInt, Unsigned};
 
 use crate::specialized_maps::CommonMap;
-use crate::specialized_sets::{Iter, Set};
+use crate::specialized_sets::{IntoIter, Iter, Set};
 use crate::traits::len::Len;
 
 /// A general-purpose optimized read-only set.
@@ -207,6 +207,20 @@ where
     }
 }
 
+impl<T, S, BH> IntoIterator for CommonSet<T, S, BH>
+where
+    T: Hash + Eq,
+    S: PrimInt + Unsigned,
+    BH: BuildHasher,
+{
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter::new(self.map.table.entries)
+    }
+}
+
 impl<'a, T, S, BH> IntoIterator for &'a CommonSet<T, S, BH>
 where
     T: Hash + Eq,
@@ -330,7 +344,7 @@ where
 
 impl<T, S, ST, BH> PartialEq<ST> for CommonSet<T, S, BH>
 where
-    T: Hash + Eq + Clone,
+    T: Hash + Eq,
     S: PrimInt + Unsigned,
     ST: Set<T>,
     BH: BuildHasher + Default,
@@ -346,7 +360,7 @@ where
 
 impl<T, S, BH> Eq for CommonSet<T, S, BH>
 where
-    T: Hash + Eq + Clone,
+    T: Hash + Eq,
     S: PrimInt + Unsigned,
     BH: BuildHasher + Default,
 {

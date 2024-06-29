@@ -1,9 +1,9 @@
 use std::any::type_name;
 use std::fmt::{Debug, Formatter, Result};
-use std::hash::{BuildHasher, Hash};
 use std::hash::RandomState;
-use std::mem::MaybeUninit;
+use std::hash::{BuildHasher, Hash};
 use std::mem::transmute;
+use std::mem::MaybeUninit;
 use std::ops::Index;
 use std::ops::IndexMut;
 

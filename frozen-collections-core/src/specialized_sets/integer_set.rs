@@ -7,10 +7,8 @@ use std::ops::{BitAnd, BitOr, BitXor, Sub};
 use num_traits::{AsPrimitive, PrimInt, Unsigned};
 
 use crate::specialized_maps::IntegerMap;
-use crate::specialized_sets::{Iter, Set};
+use crate::specialized_sets::{IntoIter, Iter, Set};
 use crate::traits::len::Len;
-
-// TODO: implement PartialEq + Eq
 
 /// A set specialized for integer values.
 #[derive(Clone)]
@@ -70,6 +68,15 @@ where
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         self.map.fmt(f) // TODO: can we do better here?
+    }
+}
+
+impl<T, S> IntoIterator for IntegerSet<T, S> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter::new(self.map.table.entries)
     }
 }
 
@@ -171,4 +178,26 @@ where
     fn sub(self, rhs: &ST) -> Self::Output {
         self.difference(rhs).copied().collect()
     }
+}
+
+impl<T, S, ST> PartialEq<ST> for IntegerSet<T, S>
+where
+    T: PrimInt + AsPrimitive<u64> + Hash,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+{
+    fn eq(&self, other: &ST) -> bool {
+        if self.len() != other.len() {
+            return false;
+        }
+
+        self.iter().all(|value| other.contains(value))
+    }
+}
+
+impl<T, S> Eq for IntegerSet<T, S>
+where
+    T: PrimInt + AsPrimitive<u64> + Hash,
+    S: PrimInt + Unsigned,
+{
 }

@@ -11,10 +11,9 @@
 //! This analyzers can take some time. But the value in spending this time up front
 //! is that the collections provide blazingly fast read-time performance.
 
+pub use frozen_collections_core::*;
 #[doc(inline)]
 pub use {
     frozen_collections_core::facades::FrozenMap, frozen_collections_core::facades::FrozenSet,
     frozen_collections_core::traits::*, frozen_collections_macros::*,
 };
-pub use frozen_collections_core::*;
-

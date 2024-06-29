@@ -37,7 +37,7 @@ impl<'a, T> Iterator for Iter<'a, T> {
     where
         Self: Sized,
     {
-        self.len()
+        self.len() - self.index
     }
 }
 
@@ -64,6 +64,57 @@ where
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         f.debug_list().entries(self.clone()).finish()
+    }
+}
+
+/// A consuming iterator over the items of a set.
+#[derive(Clone)]
+pub struct IntoIter<T> {
+    iter: std::vec::IntoIter<(T, ())>,
+}
+
+impl<T> IntoIter<T> {
+    pub(crate) fn new(entries: Box<[(T, ())]>) -> Self {
+        Self {
+            iter: Vec::from(entries).into_iter(),
+        }
+    }
+}
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let item = self.iter.next()?;
+        Some(item.0)
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.iter.size_hint()
+    }
+
+    fn count(self) -> usize
+    where
+        Self: Sized,
+    {
+        self.iter.count()
+    }
+}
+
+impl<T> ExactSizeIterator for IntoIter<T> {
+    fn len(&self) -> usize {
+        self.iter.len()
+    }
+}
+
+impl<T> FusedIterator for IntoIter<T> {}
+
+impl<T> Debug for IntoIter<T>
+where
+    T: Clone + Debug,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_list().entries((*self).clone()).finish()
     }
 }
 
@@ -111,7 +162,7 @@ where
 
             loop {
                 let item = self.s2_iter.next()?;
-                if !self.s1.contains(item) {
+                if !self.s1.contains(&item) {
                     return Some(item);
                 }
             }
@@ -123,7 +174,7 @@ where
 
             loop {
                 let item = self.s1_iter.next()?;
-                if !self.s2.contains(item) {
+                if !self.s2.contains(&item) {
                     return Some(item);
                 }
             }
@@ -214,14 +265,15 @@ where
                 break;
             }
 
-            if !self.s2.contains(item.unwrap()) {
-                return item;
+            let item = item.unwrap();
+            if !self.s2.contains(&item) {
+                return Some(item);
             }
         }
 
         loop {
             let item = self.s2_iter.next()?;
-            if !self.s1.contains(item) {
+            if !self.s1.contains(&item) {
                 return Some(item);
             }
         }
@@ -305,7 +357,7 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let item = self.s1_iter.next()?;
-            if !self.s2.contains(item) {
+            if !self.s2.contains(&item) {
                 return Some(item);
             }
         }
@@ -391,14 +443,14 @@ where
         if self.s1.len() < self.s2.len() {
             loop {
                 let item = self.s1_iter.next()?;
-                if self.s2.contains(item) {
+                if self.s2.contains(&item) {
                     return Some(item);
                 }
             }
         } else {
             loop {
                 let item = self.s2_iter.next()?;
-                if self.s1.contains(item) {
+                if self.s1.contains(&item) {
                     return Some(item);
                 }
             }

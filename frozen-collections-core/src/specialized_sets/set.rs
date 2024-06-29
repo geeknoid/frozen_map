@@ -1,9 +1,9 @@
-use std::collections::{BTreeSet, HashSet};
 use std::collections::hash_set::Iter;
+use std::collections::{BTreeSet, HashSet};
 use std::hash::{BuildHasher, Hash};
 
-use crate::specialized_sets::{Difference, Intersection, SymmetricDifference, Union};
 use crate::specialized_sets::set_ops::{is_disjoint, is_subset, is_superset};
+use crate::specialized_sets::{Difference, Intersection, SymmetricDifference, Union};
 use crate::traits::len::Len;
 
 pub trait Set<T>: Len {

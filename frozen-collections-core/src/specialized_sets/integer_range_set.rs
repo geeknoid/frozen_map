@@ -7,10 +7,8 @@ use std::ops::{BitAnd, BitOr, BitXor, Sub};
 use num_traits::PrimInt;
 
 use crate::specialized_maps::IntegerRangeMap;
-use crate::specialized_sets::{Iter, Set};
+use crate::specialized_sets::{IntoIter, Iter, Set};
 use crate::traits::len::Len;
-
-// TODO: implement PartialEq + Eq
 
 /// A map whose values are a continuous range of integers.
 #[derive(Clone)]
@@ -72,6 +70,15 @@ where
     }
 }
 
+impl<T> IntoIterator for IntegerRangeSet<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter::new(self.map.entries)
+    }
+}
+
 impl<'a, T> IntoIterator for &'a IntegerRangeSet<T> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
@@ -124,7 +131,7 @@ where
     type Output = HashSet<T, RandomState>;
 
     fn bitor(self, rhs: &ST) -> Self::Output {
-        self.union(rhs).cloned().collect()
+        self.union(rhs).copied().collect()
     }
 }
 
@@ -136,7 +143,7 @@ where
     type Output = HashSet<T, RandomState>;
 
     fn bitand(self, rhs: &ST) -> Self::Output {
-        self.intersection(rhs).cloned().collect()
+        self.intersection(rhs).copied().collect()
     }
 }
 
@@ -148,7 +155,7 @@ where
     type Output = HashSet<T, RandomState>;
 
     fn bitxor(self, rhs: &ST) -> Self::Output {
-        self.symmetric_difference(rhs).cloned().collect()
+        self.symmetric_difference(rhs).copied().collect()
     }
 }
 
@@ -160,7 +167,7 @@ where
     type Output = HashSet<T, RandomState>;
 
     fn sub(self, rhs: &ST) -> Self::Output {
-        self.difference(rhs).cloned().collect()
+        self.difference(rhs).copied().collect()
     }
 }
 

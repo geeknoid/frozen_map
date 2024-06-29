@@ -1,16 +1,15 @@
 use std::borrow::Borrow;
+use std::collections::HashSet;
 use std::fmt::{Debug, Formatter, Result};
-use std::hash::{BuildHasher, RandomState};
-use std::ops::Range;
+use std::hash::{BuildHasher, Hash, RandomState};
+use std::ops::{BitAnd, BitOr, BitXor, Range, Sub};
 
 use num_traits::{PrimInt, Unsigned};
 
 use crate::specialized_maps::RightSliceMap;
-use crate::specialized_sets::{Iter, Set};
+use crate::specialized_sets::{IntoIter, Iter, Set};
 use crate::traits::len::Len;
 use crate::traits::slice_hash::SliceHash;
-
-// TODO: Implement PartialEq + Eq
 
 /// A set that hashes right-aligned slices of its values.
 #[derive(Clone)]
@@ -124,6 +123,15 @@ where
     }
 }
 
+impl<T, S, BH> IntoIterator for RightSliceSet<T, S, BH> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter::new(self.map.table.entries)
+    }
+}
+
 impl<'a, T, S, BH> IntoIterator for &'a RightSliceSet<T, S, BH> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
@@ -152,4 +160,84 @@ where
     fn contains(&self, value: &T) -> bool {
         self.contains(value)
     }
+}
+
+impl<T, S, ST, BH> BitOr<&ST> for &RightSliceSet<T, S, BH>
+where
+    T: SliceHash + Hash + Len + Eq + Clone,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+    BH: BuildHasher + Default,
+{
+    type Output = HashSet<T, BH>;
+
+    fn bitor(self, rhs: &ST) -> Self::Output {
+        self.union(rhs).cloned().collect()
+    }
+}
+
+impl<T, S, ST, BH> BitAnd<&ST> for &RightSliceSet<T, S, BH>
+where
+    T: SliceHash + Hash + Len + Eq + Clone,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+    BH: BuildHasher + Default,
+{
+    type Output = HashSet<T, BH>;
+
+    fn bitand(self, rhs: &ST) -> Self::Output {
+        self.intersection(rhs).cloned().collect()
+    }
+}
+
+impl<T, S, ST, BH> BitXor<&ST> for &RightSliceSet<T, S, BH>
+where
+    T: SliceHash + Hash + Len + Eq + Clone,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+    BH: BuildHasher + Default,
+{
+    type Output = HashSet<T, BH>;
+
+    fn bitxor(self, rhs: &ST) -> Self::Output {
+        self.symmetric_difference(rhs).cloned().collect()
+    }
+}
+
+impl<T, S, ST, BH> Sub<&ST> for &RightSliceSet<T, S, BH>
+where
+    T: SliceHash + Hash + Len + Eq + Clone,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+    BH: BuildHasher + Default,
+{
+    type Output = HashSet<T, BH>;
+
+    fn sub(self, rhs: &ST) -> Self::Output {
+        self.difference(rhs).cloned().collect()
+    }
+}
+
+impl<T, S, ST, BH> PartialEq<ST> for RightSliceSet<T, S, BH>
+where
+    T: SliceHash + Len + Eq,
+    S: PrimInt + Unsigned,
+    ST: Set<T>,
+    BH: BuildHasher + Default,
+{
+    fn eq(&self, other: &ST) -> bool {
+        if self.len() != other.len() {
+            return false;
+        }
+
+        self.iter().all(|value| other.contains(value))
+    }
+}
+
+impl<T, S, BH> Eq for RightSliceSet<T, S, BH>
+where
+    T: SliceHash + Len + Eq,
+    S: PrimInt + Unsigned,
+    BH: BuildHasher + Default,
+{
 }

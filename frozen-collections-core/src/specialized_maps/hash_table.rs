@@ -31,7 +31,7 @@ where
     where
         F: Fn(&K) -> u64,
     {
-        if payload.len() == 0 {
+        if payload.is_empty() {
             return Self {
                 num_slots: NonZeroU64::try_from(1).unwrap(),
                 slots: Box::new([HashTableSlot {
